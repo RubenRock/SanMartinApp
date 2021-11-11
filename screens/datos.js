@@ -4,6 +4,7 @@ import * as Interface from '../components/interface'
 import { AntDesign } from '@expo/vector-icons'
 import {useSelector} from 'react-redux'
 
+
 const fondo = require('../assets/fondo.png')
 
 function datosScreen({navigation, route}) {
@@ -43,6 +44,11 @@ function datosScreen({navigation, route}) {
       setDataSimilares(similarRedux)       
     },[])
 
+    useEffect (() =>{
+        console.log('disparo de cantidad'+ cantidad)
+        
+    },[cantidad])
+
     //filtramos la lista de producto a n items en la vista
     const inventarioFiltrado = () => dataInventario.filter((x,index) => index<=20)    
     
@@ -61,10 +67,11 @@ function datosScreen({navigation, route}) {
     
     //necesitan los hooks por eso tienen que estar dentro de esta funcion
     const changeCantidad = (cant) => {      
-        setCantidad(cant)
-        setempaqueFiltrado([]) //necesito actualizar el estado de la variable cada vez que la modifico     
+      setCantidad(x => x = cant)
+        
+        //setempaqueFiltrado([]) //necesito actualizar el estado de la variable cada vez que la modifico     
     }
-
+    
     const handleTxtProducto = (texto) => {      
       setproductoFiltrado(productoFilter(texto))
       settxtProducto(texto)
@@ -73,8 +80,9 @@ function datosScreen({navigation, route}) {
 
    
    
-    const handleListaProductos = (item)=>{                  
-      setproductoSeleccionado(item.producto) //almaceno el producto seleccionado      
+    const handleListaProductos = (item)=>{                
+      console.log(cantidad)
+      setproductoSeleccionado(x => x = item.producto) //almaceno el producto seleccionado      
       setempaqueFiltrado(dataEmpaque.filter(data => data.clave ==item.clave )) //filtra la lista de empaques                 
     }
     
@@ -107,7 +115,6 @@ function datosScreen({navigation, route}) {
     }
 
     const handleListaEmpaque = (item) =>{      
-      
       setlistProductos([
         ...listProductos,{
         id: String(Math.random()),
@@ -132,12 +139,6 @@ function datosScreen({navigation, route}) {
      let simi = dataSimilares.find(ele => ele.producto == item.clave)     
      navigation.navigate('Similares',{dataTable: listProductos,cantidad:cantidad, claveSimilar:simi.clave, empaque:item})     
     }
-
-    const messageSplash = () => {
-      return(
-         <Text style={{fontSize:10,color:Interface.colorText,textAlign:'right',marginRight:10}}>{productoSeleccionado}</Text>                
-      )      
-    }
     
     return (
       <View style = {{flex:1}}>
@@ -161,21 +162,26 @@ function datosScreen({navigation, route}) {
                 style={styles.input}
                 placeholder='Cantidad'                        
                 onChangeText={(x) => changeCantidad(x)}                        
-                value={cantidad} 
-                
+                value={cantidad}                  
               />
-            </View>              
-                
-            {messageSplash()}         
+              
+            </View>                   
 
             <View style={{height:250}}>
               <FlatList 
                 style={Interface.container}
-                data={productoFiltrado}            
+                data={productoFiltrado} 
+                extraData={[productoSeleccionado,cantidad]}           
                 keyExtractor={(item) =>item.clave}
-                renderItem={({item}) => <TouchableOpacity style={{marginBottom:10}} onPress={ () => handleListaProductos(item)}>                                                                
-                                            <Text style={styles.text}>{item.producto}</Text>
-                                        </TouchableOpacity>}
+                renderItem={({item}) =>                 
+                    <TouchableOpacity style={{marginBottom:10}} onPress={ () => handleListaProductos(item)}>                                                                
+                     {productoSeleccionado == item.producto ? 
+                                                  <Text style={styles.textstrike}>{item.producto}</Text>
+                                                  : <Text style={styles.text}>{item.producto}</Text>
+                                                } 
+                    </TouchableOpacity>
+                                            }
+                                        
               />           
                           
             </View>                              
