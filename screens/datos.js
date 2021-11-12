@@ -42,12 +42,7 @@ function datosScreen({navigation, route}) {
       setDataInventario(inventarioRedux)  
       setDataEmpaque(empaqueRedux) 
       setDataSimilares(similarRedux)       
-    },[])
-
-    useEffect (() =>{
-        console.log('disparo de cantidad'+ cantidad)
-        
-    },[cantidad])
+    },[])   
 
     //filtramos la lista de producto a n items en la vista
     const inventarioFiltrado = () => dataInventario.filter((x,index) => index<=20)    
@@ -80,8 +75,7 @@ function datosScreen({navigation, route}) {
 
    
    
-    const handleListaProductos = (item)=>{                
-      console.log(cantidad)
+    const handleListaProductos = (item)=>{                      
       setproductoSeleccionado(x => x = item.producto) //almaceno el producto seleccionado      
       setempaqueFiltrado(dataEmpaque.filter(data => data.clave ==item.clave )) //filtra la lista de empaques                 
     }
@@ -115,6 +109,7 @@ function datosScreen({navigation, route}) {
     }
 
     const handleListaEmpaque = (item) =>{      
+      console.log(cantidad)
       setlistProductos([
         ...listProductos,{
         id: String(Math.random()),
@@ -171,7 +166,7 @@ function datosScreen({navigation, route}) {
               <FlatList 
                 style={Interface.container}
                 data={productoFiltrado} 
-                extraData={[productoSeleccionado,cantidad]}           
+                extraData={productoSeleccionado}           
                 keyExtractor={(item) =>item.clave}
                 renderItem={({item}) =>                 
                     <TouchableOpacity style={{marginBottom:10}} onPress={ () => handleListaProductos(item)}>                                                                
@@ -190,6 +185,7 @@ function datosScreen({navigation, route}) {
               <FlatList 
                  style={Interface.container}
                 data={empaqueFiltrado}
+                extraData={cantidad}           
                 keyExtractor={(item) =>String(item.id)}
                 renderItem={({item}) =>  {
                     if (item.empaque !=='SEIS' && item.empaque !=='DOCE')

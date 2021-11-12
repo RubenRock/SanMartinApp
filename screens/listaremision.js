@@ -235,7 +235,7 @@ function listaRemisionScreen(){
              
               let resul = []
               for (let index = 0; index < aremision.length; index++) {
-                resul = resul+aremision[index].cantidad+' '+aremision[index].producto+' '+aremision[index].total+'\n'
+                resul += parseInt(aremision[index].cantidad)+' '+aremision[index].empaque+' '+aremision[index].producto+'  $'+aremision[index].total+'\n'
               }
               //alert(JSON.stringify(aremision))
               

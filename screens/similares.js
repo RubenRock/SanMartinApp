@@ -94,8 +94,7 @@ function similaresScreen({navigation, route}){
       }
 
       const changeCantidad = (cant) => {      
-        setCant(cant)
-        setempaqueFiltrado([]) //necesito actualizar el estado de la variable cada vez que la modifico     
+        setCant(cant)        
       }
 
       const aumentar = (item) =>{
@@ -162,8 +161,9 @@ function similaresScreen({navigation, route}){
             <View style={Interface.container}>
               <Text style={styles.encabezadoListas}>Productos</Text>
               <FlatList                         
-                    style={{height:110}}
-                    data={dataInventario}            
+                    //style={{height:110}}
+                    data={dataInventario} 
+                    extraData={productoSeleccionado}           
                     keyExtractor={(item) =>item.claves}
                     renderItem={({item}) => <TouchableOpacity style={{marginBottom:10}} onPress={ () => handleListaProductos(item)}>                                                                
                                                 {productoSeleccionado == item.productos ? 
@@ -177,10 +177,11 @@ function similaresScreen({navigation, route}){
           
 
            
-            <View style={[Interface.container,{height:150}]}>
+            <View style={Interface.container}>
               <Text style={styles.encabezadoListas}>Empaques</Text>
               <FlatList                     
                   data={empaqueFiltrado}
+                  extraData={cant}
                   keyExtractor={(item) =>String(item.id)}
                   renderItem={({item}) =>  {
                       if (item.empaque !=='SEIS' && item.empaque !=='DOCE')
@@ -199,25 +200,25 @@ function similaresScreen({navigation, route}){
               </View>
             
 
-            <View style={{flex:1}}>
-              <View style={Interface.container}>
-                  <Text style={styles.encabezadoListas}>Listado del surtido</Text>
-                  <FlatList                         
-                        data={listProductos}            
-                        keyExtractor={(item) =>item.id}
-                        renderItem={({item}) => <View style={{flex:1,flexDirection:'row',justifyContent:'space-between', marginTop:10}}>
-                                                    <View style={{flex:3}}>
-                                                      <Text style={styles.text}>{item.cantidad} - {item.empaque} {item.producto}</Text>
-                                                    </View>
-                                                    <View style={{flex:1,flexDirection:'row',justifyContent:'space-between'}}>
-                                                      <AntDesign name="pluscircleo" size={24} color="#3F3DE0" onPress={() => aumentar(item)}/>
-                                                      <AntDesign name="minuscircleo" size={24} color="#3F3DE0" onPress={() => disminur(item,parseInt(item.cantidad))}/>
-                                                      <AntDesign name="delete" size={24} color="#3F3DE0" onPress={() => setlistProductos(listProductos.filter((data)=> data.id !==item.id))}/>
-                                                    </View>
-                                                </View>}                                            
-                    /> 
-               </View >
-            </View >
+           
+            <View style={Interface.container}>
+                <Text style={styles.encabezadoListas}>Listado del surtido</Text>
+                <FlatList                         
+                      data={listProductos}            
+                      keyExtractor={(item) =>item.id}
+                      renderItem={({item}) => <View style={{flex:1,flexDirection:'row',justifyContent:'space-between', marginTop:10}}>
+                                                  <View style={{flex:3}}>
+                                                    <Text style={styles.text}>{item.cantidad} - {item.empaque} {item.producto}</Text>
+                                                  </View>
+                                                  <View style={{flex:1,flexDirection:'row',justifyContent:'space-between'}}>
+                                                    <AntDesign name="pluscircleo" size={24} color="#3F3DE0" onPress={() => aumentar(item)}/>
+                                                    <AntDesign name="minuscircleo" size={24} color="#3F3DE0" onPress={() => disminur(item,parseInt(item.cantidad))}/>
+                                                    <AntDesign name="delete" size={24} color="#3F3DE0" onPress={() => setlistProductos(listProductos.filter((data)=> data.id !==item.id))}/>
+                                                  </View>
+                                              </View>}                                            
+                  /> 
+              </View >
+         
           </ScrollView> 
         </ImageBackground>
             
