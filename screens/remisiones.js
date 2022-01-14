@@ -123,11 +123,12 @@ function Remisiones({navigation, route}){
       console.log(user[0].login)
       if (table.length >0){
         if (header.name.trim()){     
+
           db.transaction(
             tx => {       
               tx.executeSql("insert into lista_remision values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [parseInt(folio), header.name.toUpperCase(), total, currentDate, user[0].login, header.condicion, "PENDIENTE", header.direccion.toUpperCase(), "SERIE", "0" ]),
             
-            dataTable.forEach( (ele) =>{
+            table.forEach( (ele) =>{
                 tx.executeSql("insert into remisiones values (?, ?, ?, ?, ?, ?, ?)", [parseInt(folio), ele.cantidad, ele.producto, ele.total, "SERIE", ele.empaque,  "0"])
               })
             },
@@ -153,7 +154,7 @@ function Remisiones({navigation, route}){
     const obtenerPrecioPieza = (item) =>{      
         setPrecioPieza((item.precio/item.piezas).toFixed(2))
     }    
-
+    
     return (
       <View style={styles.fondo}>          
         <ImageBackground source={fondo} style={styles.fondo}>

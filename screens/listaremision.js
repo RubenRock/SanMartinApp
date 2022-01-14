@@ -300,6 +300,7 @@ function listaRemisionScreen(){
                 <View style={styles.lista}>
                   <TouchableOpacity onPress={() => leerRemision(item.folio) }>
                     <Text style={[styles.texto,{fontWeight:'bold'}]} >Folio: {(item.folio)} -{item.cliente} </Text>
+                    <Text style={[styles.texto, styles.texto_pequeño]} >Domicilio: {item.domicilio}</Text>
                     <Text style={[styles.texto, styles.texto_pequeño]} >Total: ${item.total}   Fecha: {item.fecha}</Text>
                     {/*  <Text style={[styles.texto, styles.texto_pequeño]} >Domicilio: {item.domicilio}</Text>*/}
                   </TouchableOpacity>
