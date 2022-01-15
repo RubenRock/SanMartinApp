@@ -109,25 +109,32 @@ function datosScreen({navigation, route}) {
     }
 
     const handleListaEmpaque = (item) =>{      
-      console.log(cantidad)
-      setlistProductos([
-        ...listProductos,{
-        id: String(Math.random()),
-        producto:productoSeleccionado,
-        empaque:item.empaque,
-        precio:handlePrice(item), 
-        cantidad:cantidad,
-        total: handleTotal(item),
-        clave: item.clave,  //los necesito para el boton de aumentar y disminuir de remisiones
-        piezas:item.piezas}
-      ])     
-
-      //limpiar ventana
-      setCantidad('1')
-      setproductoFiltrado(inventarioFiltrado())
-      setempaqueFiltrado([])
-      settxtProducto('')
-      setproductoSeleccionado('')
+      console.log(parseInt(cantidad))
+      if (parseInt(cantidad)) {        
+        setlistProductos([
+          ...listProductos,{
+          id: String(Math.random()),
+          producto:productoSeleccionado,
+          empaque:item.empaque,
+          precio:handlePrice(item), 
+          cantidad:cantidad,
+          total: handleTotal(item),
+          clave: item.clave,  //los necesito para el boton de aumentar y disminuir de remisiones
+          piezas:item.piezas}
+        ])     
+  
+        //limpiar ventana
+        setCantidad('1')
+        setproductoFiltrado(inventarioFiltrado())
+        setempaqueFiltrado([])
+        settxtProducto('')
+        setproductoSeleccionado('')
+        
+      } else  {
+        alert('Caantidad incorrecta ')
+        
+      }
+      
     }
     
     const handleSurtir = (item) => {      
@@ -155,6 +162,7 @@ function datosScreen({navigation, route}) {
 
               <TextInput 
                 style={styles.input}
+                keyboardType='numeric' 
                 placeholder='Cantidad'                        
                 onChangeText={(x) => changeCantidad(x)}                        
                 value={cantidad}                  
