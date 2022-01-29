@@ -7,7 +7,8 @@ const initialState = {
     listasimilar:[],
     usuarios:[],
     accesos:[],
-    user:[]
+    user:[],
+    remisiones:[]
 }
 
 
@@ -62,6 +63,12 @@ const reducer = (state = initialState, action) =>{
       }      
     }
     
+    if(action.type === "AGREGAR_REMISION"){    
+      return{
+        ...state,        
+        remisiones: action.data
+      }      
+    }
           
     return state
 }

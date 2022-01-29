@@ -3,6 +3,7 @@ import {View, ImageBackground,Text, TextInput, StyleSheet, FlatList, TouchableOp
 import * as Interface from '../components/interface'
 import * as SQLITE from 'expo-sqlite'
 import { AntDesign } from '@expo/vector-icons'
+import { useSelector, useDispatch } from 'react-redux'
 
 const db = SQLITE.openDatabase("db.db");
 let id_surdito
@@ -20,6 +21,10 @@ function similaresScreen({navigation, route}){
     const [empaqueFiltrado,setempaqueFiltrado]= useState([]) 
     const [listProductos, setlistProductos] = useState([])  //guarda los datos para la tabla que muestro en remisiones
     const [cant,setCant] = useState('1') 
+
+    const remisionesRedux = useSelector(state => state.remisiones)
+
+    const dispatch = useDispatch()
 
      //Al terminar enviamos listProductos actualizado 
      useEffect(() =>{
@@ -41,6 +46,7 @@ function similaresScreen({navigation, route}){
     },[listProductos])
 
     useEffect( () => {
+        console.log(remisionesRedux)
         id_surdito = String(Math.random()) //id que le voy a asignar a este producto surdito
         db.transaction(
           tx => {               
@@ -74,24 +80,29 @@ function similaresScreen({navigation, route}){
       }
 
       const handleListaEmpaque = (item) =>{            
-        setlistProductos([
-          ...listProductos,{
-          id: String(Math.random()),
-          producto:productoSeleccionado,
-          empaque:item.empaque,
-          precio:'0', 
-          cantidad:cant,
-          total: '0',
-          surtido:id_surdito,
-          clave: item.clave,  //los necesito para el boton de aumentar y disminuir de remisiones
-          piezas:item.piezas}
-        ])     
-  
-        //limpiar ventana        
-        setCant('1')        
-        setempaqueFiltrado([])        
-        setproductoSeleccionado('')
-      }
+        if (parseInt(cant)) {  
+          setlistProductos([
+            ...listProductos,{
+            id: String(Math.random()),
+            producto:productoSeleccionado,
+            empaque:item.empaque,
+            precio:'0', 
+            cantidad:cant, 
+            total: '0',
+            surtido:id_surdito,
+            clave: item.clave,  //los necesito para el boton de aumentar y disminuir de remisiones
+            piezas:item.piezas}
+          ])     
+    
+          //limpiar ventana        
+          setCant('1')        
+          setempaqueFiltrado([])        
+          setproductoSeleccionado('')
+        } else  {
+          alert('Cantidad incorrecta ')
+          
+        }
+    }
 
       const changeCantidad = (cant) => {      
         setCant(cant)        
@@ -114,6 +125,22 @@ function similaresScreen({navigation, route}){
       }
 
       const handleAgregar = () => {
+        //Guardar en Redux
+        dispatch({type:'AGREGAR_REMISION', data:[
+          ...dataTable,
+          {
+          id: String(Math.random()),
+          producto:nombreSimilar,
+          empaque:empaque.empaque,
+          precio:empaque.precio, 
+          cantidad:cantidad,
+          total: empaque.precio * cantidad,
+          surtido:id_surdito,
+          clave: 'GENERICA',  //los necesito para el boton de aumentar y disminuir de remisiones
+          piezas:empaque.piezas},
+          ...listProductos
+        ]})
+
         setlistProductos([
           ...dataTable,
           {
@@ -153,7 +180,13 @@ function similaresScreen({navigation, route}){
                       <Text style={[styles.text,{fontSize:10}]}>Piezas agregadas</Text>
                     </View>
                 </View>
-                <TextInput placeholder="Cantidad" value={cant} style={styles.input} onChangeText={(x) => changeCantidad(x)}/>
+                <TextInput 
+                  placeholder="Cantidad" 
+                  keyboardType='numeric'
+                  value={cant} 
+                  style={styles.input} 
+                  onChangeText={(x) => changeCantidad(x)}
+                />
 
             </View>
 

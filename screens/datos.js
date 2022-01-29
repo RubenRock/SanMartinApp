@@ -2,7 +2,7 @@ import React,{useEffect, useState} from 'react'
 import {View, TextInput, FlatList, Text, TouchableOpacity, StyleSheet, ImageBackground, ScrollView} from 'react-native'
 import * as Interface from '../components/interface'
 import { AntDesign } from '@expo/vector-icons'
-import {useSelector} from 'react-redux'
+import {useSelector, useDispatch} from 'react-redux'
 
 
 const fondo = require('../assets/fondo.png')
@@ -14,6 +14,9 @@ function datosScreen({navigation, route}) {
     const inventarioRedux = useSelector(state => state.inventario)
     const empaqueRedux = useSelector(state => state.empaque)
     const similarRedux = useSelector(state => state.similar)
+    
+
+    const dispatch = useDispatch()
 
     
     const [empaqueFiltrado,setempaqueFiltrado]= useState([]) 
@@ -59,7 +62,7 @@ function datosScreen({navigation, route}) {
       setempaqueFiltrado([])
       settxtProducto('')
     },[route]) 
-    
+       
     //necesitan los hooks por eso tienen que estar dentro de esta funcion
     const changeCantidad = (cant) => {      
       setCantidad(x => x = cant)
@@ -87,9 +90,9 @@ function datosScreen({navigation, route}) {
 
       let doce = arraydoce.filter((ele) => ele.empaque == 'DOCE' && item.piezas == ele.piezas)      
 
-      if (cantidad == '6')  {if (seis.length)  return parseFloat(seis[0].precio/6).toFixed(2)}
+      if (parseInt(cantidad) == '6')  {if (seis.length)  return parseFloat(seis[0].precio/6).toFixed(2)}
 
-      if (cantidad % 12 == 0)  {if (doce.length)  return parseFloat(doce[0].precio/12).toFixed(2)}
+      if (parseInt(cantidad) % 12 == 0)  {if (doce.length)  return parseFloat(doce[0].precio/12).toFixed(2)}
 
       return item.precio
     }
@@ -101,16 +104,26 @@ function datosScreen({navigation, route}) {
 
       let doce = arraydoce.filter((ele) => ele.empaque == 'DOCE' && item.piezas == ele.piezas)      
 
-      if (cantidad == '6')  {if (seis.length)  return seis[0].precio}
+      if (parseInt(cantidad) == '6')  {if (seis.length)  return seis[0].precio}
 
-      if (cantidad % 12 == 0)  {if (doce.length)  return (cantidad/12)*doce[0].precio}
+      if (parseInt(cantidad) % 12 == 0)  {if (doce.length)  return (cantidad/12)*doce[0].precio}
 
-      return item.precio*cantidad
+      return item.precio*parseInt(cantidad)
     }
 
-    const handleListaEmpaque = (item) =>{      
-      console.log(parseInt(cantidad))
-      if (parseInt(cantidad)) {        
+    const handleListaEmpaque = (item) =>{            
+      if (parseInt(cantidad)) {  
+        //Guardar en Redux
+        dispatch({type:'AGREGAR_REMISION', data:[...listProductos,{
+          id: String(Math.random()),
+          producto:productoSeleccionado,
+          empaque:item.empaque,
+          precio:handlePrice(item), 
+          cantidad:cantidad,
+          total: handleTotal(item),
+          clave: item.clave,  //los necesito para el boton de aumentar y disminuir de remisiones
+          piezas:item.piezas}]})
+
         setlistProductos([
           ...listProductos,{
           id: String(Math.random()),
@@ -121,17 +134,18 @@ function datosScreen({navigation, route}) {
           total: handleTotal(item),
           clave: item.clave,  //los necesito para el boton de aumentar y disminuir de remisiones
           piezas:item.piezas}
-        ])     
+        ])        
+        
   
         //limpiar ventana
         setCantidad('1')
         setproductoFiltrado(inventarioFiltrado())
         setempaqueFiltrado([])
         settxtProducto('')
-        setproductoSeleccionado('')
+        setproductoSeleccionado('')        
         
       } else  {
-        alert('Caantidad incorrecta ')
+        alert('Cantidad incorrecta ')
         
       }
       
@@ -150,6 +164,11 @@ function datosScreen({navigation, route}) {
               <TouchableOpacity  onPress={ () => navigation.navigate('Remisiones', {dataTable: listProductos, encabezado: encabezado})}>
                 <Text style={[Interface.boton,{marginTop:5,width:"100%"}]}>Agregar</Text>
               </TouchableOpacity>  
+
+              <TouchableOpacity  onPress={ () => {console.log(remisionesRedux)}}>
+                <Text style={[Interface.boton,{marginTop:5,width:"100%"}]}>remisiones redux</Text>
+              </TouchableOpacity>  
+
               <View style={{flexDirection:'row', alignItems:"center"}}>
                 <AntDesign name="search1" size={18} color={Interface.colorText} />
                 <TextInput                    

@@ -6,12 +6,13 @@ import * as SQLITE from 'expo-sqlite'
 const db = SQLITE.openDatabase("db.db");
 
 
-const Descargas = ({state,cargaInventario ,cargaEmpaque, cargaSimilar, cargaUsuarios, cargaAccesos}) =>{
+    const Descargas = ({state,cargaInventario ,cargaEmpaque, cargaSimilar, cargaUsuarios, cargaAccesos, cargaRemisiones}) =>{
     const[dataInventario, setDataInventario] = useState([])
     const[dataEmpaque, setDataEmpaque] = useState([])
     const[dataSimilares, setDataSimilares] = useState([])
     const[dataUsuarios, setDataUsuarios] = useState([])
     const[dataAccesos, setDataAccesos] = useState([])
+    const[dataRemisiones, setDataRemisiones] = useState([])
     
 
     useEffect(() =>{
@@ -122,6 +123,13 @@ const mapDispatchToProps = dispatch => ({
     cargaAccesos(data){
       dispatch({
           type:"CARGAR_ACCESOS",
+          data
+      })
+    },
+
+    cargaRemisiones(data){
+      dispatch({
+          type:"CARGAR_REMISIONES",
           data
       })
     },
