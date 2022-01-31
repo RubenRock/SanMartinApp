@@ -2,7 +2,7 @@ import React,{useState, useEffect} from 'react'
 import {View, Text, TextInput, StyleSheet,Picker, FlatList, Alert, ImageBackground, TouchableOpacity} from 'react-native'
 import * as SQLITE from 'expo-sqlite'
 import { AntDesign } from '@expo/vector-icons';
-import {useSelector} from 'react-redux'
+import {useSelector, useDispatch} from 'react-redux'
 
 const db = SQLITE.openDatabase("db.db")
 
@@ -21,6 +21,10 @@ function Remisiones({navigation, route}){
     const [precioPieza, setPrecioPieza] = useState()
 
     const user = useSelector(state => state.user)
+    const remisionesRedux = useSelector(state => state.remisiones)
+    console.log(remisionesRedux)
+
+    const dispatch = useDispatch()
 
   
     //obtenemos numero de folio de la remision
@@ -37,7 +41,7 @@ function Remisiones({navigation, route}){
     }
 
     useEffect(() =>{
-     obtenerFolio()
+     obtenerFolio()     
     }, [])
 
     useEffect(() => {                 
@@ -57,13 +61,13 @@ function Remisiones({navigation, route}){
 
     
 
-    //al realizar cualquier modificacion en "table" realizamos la suma 
+    //al realizar cualquier modificacion en la remision realizamos la suma 
     useEffect( () => {
-      let data = [...table] 
+      let data = [...remisionesRedux] 
       let total = data.map((el) => parseFloat(el.total))      
       let  sum = total.reduce((prev, next) => prev + next,0)      
       setTotal(sum)
-    },[table])
+    },[remisionesRedux])
 
     
     //
@@ -102,12 +106,14 @@ function Remisiones({navigation, route}){
     //al presionar aumetar o disminuir cantidad, disparo este codigo
     useEffect(() => {      
       if (mayoreo.cantidad){
-        let data = [...table] 
+        let data = [...remisionesRedux] 
         let id = (data.findIndex((x) => x.id == mayoreo.id))      
         data[id].cantidad = mayoreo.cantidad     
         data[id].precio = mayoreo.precio
         data[id].total = mayoreo.total        
-        setTable(data)                
+        setTable(data) 
+
+        dispatch({type:'AGREGAR_REMISION', data:data})
       }
     },[mayoreo])
 
@@ -205,7 +211,8 @@ function Remisiones({navigation, route}){
 
           <FlatList 
             style={styles.container2}
-            data={table}
+            data={remisionesRedux}
+            //data={table}
             //keyExtractor={}
             renderItem={({item}) => 
                 <View style={{flexDirection:'row', justifyContent:'space-between'}}>

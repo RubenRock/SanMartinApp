@@ -14,6 +14,7 @@ function datosScreen({navigation, route}) {
     const inventarioRedux = useSelector(state => state.inventario)
     const empaqueRedux = useSelector(state => state.empaque)
     const similarRedux = useSelector(state => state.similar)
+    const remisionesRedux = useSelector(state => state.remisiones)
     
 
     const dispatch = useDispatch()
@@ -114,7 +115,7 @@ function datosScreen({navigation, route}) {
     const handleListaEmpaque = (item) =>{            
       if (parseInt(cantidad)) {  
         //Guardar en Redux
-        dispatch({type:'AGREGAR_REMISION', data:[...listProductos,{
+        dispatch({type:'AGREGAR_REMISION', data:[...remisionesRedux,{
           id: String(Math.random()),
           producto:productoSeleccionado,
           empaque:item.empaque,
@@ -163,11 +164,7 @@ function datosScreen({navigation, route}) {
             <View  style={Interface.container}>
               <TouchableOpacity  onPress={ () => navigation.navigate('Remisiones', {dataTable: listProductos, encabezado: encabezado})}>
                 <Text style={[Interface.boton,{marginTop:5,width:"100%"}]}>Agregar</Text>
-              </TouchableOpacity>  
-
-              <TouchableOpacity  onPress={ () => {console.log(remisionesRedux)}}>
-                <Text style={[Interface.boton,{marginTop:5,width:"100%"}]}>remisiones redux</Text>
-              </TouchableOpacity>  
+              </TouchableOpacity>    
 
               <View style={{flexDirection:'row', alignItems:"center"}}>
                 <AntDesign name="search1" size={18} color={Interface.colorText} />
