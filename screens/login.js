@@ -128,7 +128,7 @@ function LoginScreen ({accion}) {
                             </TouchableOpacity>  
                             <TouchableOpacity style={{marginTop:10}} onPress={() => setNewUserScreen(true)}>
                                 <Text style={{textAlign:'center',color:Interface.colorText}}>Nuevo usuario</Text>
-                            </TouchableOpacity>                            
+                            </TouchableOpacity> 
                         </>
                     }
                 </View>

@@ -13,7 +13,7 @@ function Remisiones({navigation, route}){
     const {dataTable, encabezado} = route.params    
     
     const [currentDate, setCurrentDate] = useState('Cargando..');    
-    const [table, setTable] = useState([]);    
+    const [table, setTable] = useState([]);  //borrar despues de implemetar remisionesRedux   
     const [mayoreo, setMayoreo] = useState({total:'',cantidad:0});    
     const [total, setTotal] = useState(0)
     const [header, setHeader]= useState({name:'',direccion:'',condicion:'CONTADO'})
@@ -72,7 +72,7 @@ function Remisiones({navigation, route}){
     
     //
     const handlePrice =  (item,cantidad) => {      
-      let resul, datos =[], precio = 0
+      let resul, datos =[], precio = 0 
       db.transaction(
          tx => { 
            tx.executeSql("select * from empaques where clave = ?", [item.clave],  (tx, res) =>  {            
@@ -127,14 +127,14 @@ function Remisiones({navigation, route}){
 
     const handleGuardar = () => {
       console.log(user[0].login)
-      if (table.length >0){
+      if (remisionesRedux.length >0){
         if (header.name.trim()){     
 
           db.transaction(
             tx => {       
               tx.executeSql("insert into lista_remision values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [parseInt(folio), header.name.toUpperCase(), total, currentDate, user[0].login, header.condicion, "PENDIENTE", header.direccion.toUpperCase(), "SERIE", "0" ]),
             
-            table.forEach( (ele) =>{
+            remisionesRedux.forEach( (ele) =>{
                 tx.executeSql("insert into remisiones values (?, ?, ?, ?, ?, ?, ?)", [parseInt(folio), ele.cantidad, ele.producto, ele.total, "SERIE", ele.empaque,  "0"])
               })
             },

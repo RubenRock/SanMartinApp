@@ -23,7 +23,7 @@ function datosScreen({navigation, route}) {
     const [empaqueFiltrado,setempaqueFiltrado]= useState([]) 
     const [productoFiltrado,setproductoFiltrado] = useState([])
     const [cantidad,setCantidad] = useState('1')    
-    const [productoSeleccionado, setproductoSeleccionado] = useState('')    
+    const [productoSeleccionado, setproductoSeleccionado] = useState('')       
     const [listProductos, setlistProductos] = useState([])  //guarda los datos para la tabla que muestro en remisiones
     const [txtProducto, settxtProducto] = useState('')  //necesario para limpiar la caja de producto
     const [dataInventario,setDataInventario] = useState([]) 
@@ -31,6 +31,25 @@ function datosScreen({navigation, route}) {
     const [dataSimilares,setDataSimilares] = useState([]) 
 
     
+   const MostrarMedioMayoreo = (props)=>{
+     console.log(props)
+     let empaque = props.empaque
+     console.log(empaque)
+     if (empaque){
+        let emapaqueSeis = empaque
+        let seis = emapaqueSeis.filter(x => x.empaque ==='SEIS')
+
+        let empaqueDoce = empaque
+        let doce = empaqueDoce.filter(x => x.empaque ==='DOCE')
+          console.log(seis[0])
+          return(
+            <>
+            {seis[0] ? <Text style={styles.text}>6pz :   ${seis[0].precio}   p.u.:   ${(parseFloat(seis[0].precio)/6).toFixed(2)}</Text>: null }
+            {doce[0]? <Text style={styles.text}> 12pz :   ${doce[0].precio}   p.u.:   ${(parseFloat(doce[0].precio)/12).toFixed(2)}</Text> : null}
+            </>
+          )
+      }
+    }
 
     const productoFilter = (text) => {
       let resul = []      
@@ -80,8 +99,8 @@ function datosScreen({navigation, route}) {
    
    
     const handleListaProductos = (item)=>{                      
-      setproductoSeleccionado(x => x = item.producto) //almaceno el producto seleccionado      
-      setempaqueFiltrado(dataEmpaque.filter(data => data.clave ==item.clave )) //filtra la lista de empaques                 
+      setproductoSeleccionado(item.producto) //almaceno el producto seleccionado      
+      setempaqueFiltrado(dataEmpaque.filter(data => data.clave ==item.clave ).sort((a,b)=>a.precio-b.precio)) //filtra la lista de empaques                 
     }
     
     const handlePrice = (item) => {      
@@ -231,6 +250,9 @@ function datosScreen({navigation, route}) {
                   }
                   }
               />
+
+              <MostrarMedioMayoreo empaque={empaqueFiltrado}/>                        
+             
               </View>              
               </ScrollView>
         </ImageBackground>

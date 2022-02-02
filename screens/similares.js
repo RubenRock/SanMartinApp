@@ -213,7 +213,7 @@ function similaresScreen({navigation, route}){
             <View style={Interface.container}>
               <Text style={styles.encabezadoListas}>Empaques</Text>
               <FlatList                     
-                  data={empaqueFiltrado}
+                  data={empaqueFiltrado.sort((a,b)=>a.precio-b.precio)}
                   extraData={cant}
                   keyExtractor={(item) =>String(item.id)}
                   renderItem={({item}) =>  {
