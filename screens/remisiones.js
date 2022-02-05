@@ -13,7 +13,7 @@ function Remisiones({navigation, route}){
     const {dataTable, encabezado} = route.params    
     
     const [currentDate, setCurrentDate] = useState('Cargando..');    
-    const [table, setTable] = useState([]);  //borrar despues de implemetar remisionesRedux   
+   // const [table, setTable] = useState([]);  //borrar despues de implemetar remisionesRedux   
     const [mayoreo, setMayoreo] = useState({total:'',cantidad:0});    
     const [total, setTotal] = useState(0)
     const [header, setHeader]= useState({name:'',direccion:'',condicion:'CONTADO'})
@@ -44,8 +44,7 @@ function Remisiones({navigation, route}){
      obtenerFolio()     
     }, [])
 
-    useEffect(() => {                 
-      setTable(dataTable)      
+    useEffect(() => {                      
       setHeader(encabezado)
       var date = new Date().getDate(); //Current Date
       var month = new Date().getMonth() + 1; //Current Month
@@ -110,8 +109,7 @@ function Remisiones({navigation, route}){
         let id = (data.findIndex((x) => x.id == mayoreo.id))      
         data[id].cantidad = mayoreo.cantidad     
         data[id].precio = mayoreo.precio
-        data[id].total = mayoreo.total        
-        setTable(data) 
+        data[id].total = mayoreo.total                
 
         dispatch({type:'AGREGAR_REMISION', data:data})
       }
@@ -123,6 +121,12 @@ function Remisiones({navigation, route}){
 
     const disminur = (item,cant) =>{          
       handlePrice(item,cant-1)  
+    }
+
+    const eliminarItem = (item)=>{
+      item.surtido ?  dispatch({type:'AGREGAR_REMISION', data:remisionesRedux.filter((data)=> data.surtido !== item.surtido )})      
+      : dispatch({type:'AGREGAR_REMISION', data:remisionesRedux.filter((data)=> data.id !== item.id )})         
+
     }
 
     const handleGuardar = () => {
@@ -152,7 +156,6 @@ function Remisiones({navigation, route}){
     
     const handleClear = () =>{
       setHeader({name:'',direccion:'',condicion:'CONTADO'})
-      setTable([])
       setTotal('0')
       obtenerFolio()
     }
@@ -166,7 +169,7 @@ function Remisiones({navigation, route}){
         <ImageBackground source={fondo} style={styles.fondo}>
         <View style={styles.container1}>        
           <View style={{flexDirection:'row', justifyContent:'space-around'}}>
-            <AntDesign name="pluscircleo" size={24} color="#3F3DE0" onPress={() => navigation.navigate('Datos', {dataTable: table, encabezado: header})} />
+            <AntDesign name="pluscircleo" size={24} color="#3F3DE0" onPress={() => navigation.navigate('Datos', {encabezado: header})} />
             <AntDesign name="save" size={30} color="#3F3DE0" onPress={() => handleGuardar()}/>            
             <AntDesign name="closecircleo" size={30} color="#3F3DE0" onPress={() => handleClear()}/>                               
           </View>
@@ -215,7 +218,7 @@ function Remisiones({navigation, route}){
             //data={table}
             //keyExtractor={}
             renderItem={({item}) => 
-                <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+                <View style={{flexDirection:'row', justifyContent:'space-between',borderBottomWidth:1, borderColor:'white'}}>
 
                   <TouchableOpacity style={{flex:3, marginBottom:12}} onPress={() => obtenerPrecioPieza(item)}>
                     <Text style={[styles.text,{fontWeight:"bold"}]}>{item.cantidad} - {item.empaque} {item.producto}</Text>
@@ -234,8 +237,7 @@ function Remisiones({navigation, route}){
                       : null                    
                     }
                     {item.precio !== '0' ?                      
-                        <AntDesign name="delete" size={24} color="#3F3DE0" onPress={() => item.surtido ? setTable(table.filter((data)=> data.surtido !== item.surtido ))
-                                                                                                        : setTable(table.filter((data)=> data.id !==item.id ))}/>                      
+                        <AntDesign name="delete" size={24} color="#3F3DE0" onPress={() => eliminarItem(item) }/>
                       : null
                     } 
                   </View>                  

@@ -8,7 +8,7 @@ import {useSelector, useDispatch} from 'react-redux'
 const fondo = require('../assets/fondo.png')
 
 function datosScreen({navigation, route}) {
-    const {dataTable, encabezado} = route.params   //encabezado trae nombre, domicilio y condicion para que no se borre de remisiones 
+    const {encabezado} = route.params   //encabezado trae nombre, domicilio y condicion para que no se borre de remisiones 
     
     //obtenemos los daatos de Redux
     const inventarioRedux = useSelector(state => state.inventario)
@@ -32,23 +32,21 @@ function datosScreen({navigation, route}) {
 
     
    const MostrarMedioMayoreo = (props)=>{
-     console.log(props)
-     let empaque = props.empaque
-     console.log(empaque)
-     if (empaque){
+     let {empaque} = props
+     if (empaque[0]) {
         let emapaqueSeis = empaque
         let seis = emapaqueSeis.filter(x => x.empaque ==='SEIS')
 
         let empaqueDoce = empaque
-        let doce = empaqueDoce.filter(x => x.empaque ==='DOCE')
-          console.log(seis[0])
-          return(
-            <>
-            {seis[0] ? <Text style={styles.text}>6pz :   ${seis[0].precio}   p.u.:   ${(parseFloat(seis[0].precio)/6).toFixed(2)}</Text>: null }
-            {doce[0]? <Text style={styles.text}> 12pz :   ${doce[0].precio}   p.u.:   ${(parseFloat(doce[0].precio)/12).toFixed(2)}</Text> : null}
-            </>
-          )
-      }
+        let doce = empaqueDoce.filter(x => x.empaque ==='DOCE')          
+        return(
+          <View style={{marginLeft:25}}>
+            {seis[0] ? <Text style={styles.text}>6pz :   ${seis[0].precio}        p.u.:   ${(parseFloat(seis[0].precio)/6).toFixed(2)}</Text>: null }
+            {doce[0] ? <Text style={styles.text}>12pz :   ${doce[0].precio}        p.u.:   ${(parseFloat(doce[0].precio)/12).toFixed(2)}</Text> : null}
+          </View> 
+        )
+      }else
+      return(null)
     }
 
     const productoFilter = (text) => {
@@ -75,7 +73,7 @@ function datosScreen({navigation, route}) {
     },[dataInventario])    
     
     useEffect(() =>{
-      setlistProductos(dataTable)
+      
       
       setCantidad('1')
       setproductoFiltrado(inventarioFiltrado())
@@ -144,7 +142,7 @@ function datosScreen({navigation, route}) {
           clave: item.clave,  //los necesito para el boton de aumentar y disminuir de remisiones
           piezas:item.piezas}]})
 
-        setlistProductos([
+        /* setlistProductos([
           ...listProductos,{
           id: String(Math.random()),
           producto:productoSeleccionado,
@@ -154,7 +152,7 @@ function datosScreen({navigation, route}) {
           total: handleTotal(item),
           clave: item.clave,  //los necesito para el boton de aumentar y disminuir de remisiones
           piezas:item.piezas}
-        ])        
+        ])         */
         
   
         //limpiar ventana
@@ -173,25 +171,34 @@ function datosScreen({navigation, route}) {
     
     const handleSurtir = (item) => {      
      let simi = dataSimilares.find(ele => ele.producto == item.clave)     
-     navigation.navigate('Similares',{dataTable: listProductos,cantidad:cantidad, claveSimilar:simi.clave, empaque:item})     
+     navigation.navigate('Similares',{cantidad:cantidad, claveSimilar:simi.clave, empaque:item})     
+    }
+
+    const Empaques = (props)=>{      
+      let {item} = props
+      return(
+        < View style={{flexDirection:'column'}}>                        
+          <Text style={styles.text} >{item.empaque} - {item.precio}</Text> 
+          {/* muestro precio de cajas o bultos */}
+          {item.piezas>1 ? <Text style={styles.smallText} > P.U. ${(item.precio/item.piezas).toFixed(2)}</Text> 
+          : null}
+          
+        </View>
+      )
     }
     
     return (
       <View style = {{flex:1}}>
         <ImageBackground source={fondo} style={styles.container}>
             <ScrollView>
-            <View  style={Interface.container}>
-              <TouchableOpacity  onPress={ () => navigation.navigate('Remisiones', {dataTable: listProductos, encabezado: encabezado})}>
-                <Text style={[Interface.boton,{marginTop:5,width:"100%"}]}>Agregar</Text>
-              </TouchableOpacity>    
+            <View  style={Interface.container}>                
 
               <View style={{flexDirection:'row', alignItems:"center"}}>
                 <AntDesign name="search1" size={18} color={Interface.colorText} />
                 <TextInput                    
                   onChangeText={(texto) => handleTxtProducto(texto) }
                   style={[styles.input,{width:'90%'}]}
-                  value={txtProducto}
-                 
+                  value={txtProducto}                 
                 />        
               </View>            
 
@@ -234,9 +241,7 @@ function datosScreen({navigation, route}) {
                     if (item.empaque !=='SEIS' && item.empaque !=='DOCE')
                       return(
                         <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:10}}>                      
-                        <TouchableOpacity>                        
-                          <Text style={styles.text} >{item.empaque} - {item.precio}</Text> 
-                          </TouchableOpacity>
+                          <Empaques item={item}/>
                           <View style={{flexDirection:'row'}}>
                             {dataSimilares.find(ele => ele.producto == item.clave) ?  //filtro el boton de surtir solo para los que si pueden hacerlo
                               <AntDesign name="bars" size={24} color={Interface.colorText} style={{marginRight:30}} onPress={()=> handleSurtir(item) }/>            
@@ -250,8 +255,9 @@ function datosScreen({navigation, route}) {
                   }
                   }
               />
-
+             
               <MostrarMedioMayoreo empaque={empaqueFiltrado}/>                        
+               
              
               </View>              
               </ScrollView>
@@ -285,6 +291,11 @@ const styles = StyleSheet.create({
   text:{
     color:Interface.colorText,
     fontWeight:"bold"
+  },
+  smallText:{
+    color:Interface.colorText,
+    fontWeight:"bold",
+    fontSize:11,
   },
   textstrike:{
     color:Interface.colorText,

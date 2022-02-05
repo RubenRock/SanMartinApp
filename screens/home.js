@@ -1,7 +1,7 @@
 import React from 'react'
 import {View, Text, TouchableOpacity,  StyleSheet, Image,ImageBackground} from 'react-native'
 import * as Interface from '../components/interface'
-import {useSelector} from 'react-redux'
+import {useSelector, useDispatch} from 'react-redux'
 
 
 let encabezado = {name:'',direccion:'',condicion:'CONTADO'}
@@ -13,6 +13,14 @@ function HomeScreen({ navigation }) {
 
   const user = useSelector(state => state.user)
   const accesos = useSelector(state => state.accesos)
+
+  const dispatch = useDispatch();
+
+  const irARemisiones = () =>{
+    dispatch({type:'AGREGAR_REMISION', data:''})
+    navigation.navigate('Remisiones',{encabezado:encabezado})
+
+  }
 
   const buscarAcceso = () =>{   
     const resul = accesos.find(x => x.login == user[0].login)    
@@ -33,7 +41,7 @@ function HomeScreen({ navigation }) {
           </View>      
 
           <View style={[Interface.container,{alignItems:"center",flex:1,marginBottom:15}]}>
-            <TouchableOpacity onPress={() => navigation.navigate('Remisiones',{dataTable: '',encabezado:encabezado})}>
+            <TouchableOpacity onPress={() => irARemisiones()}>
               <Text style={Interface.boton}>Remisiones</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={()=> navigation.navigate('ListaRemision')}>

@@ -127,7 +127,7 @@ function similaresScreen({navigation, route}){
       const handleAgregar = () => {
         //Guardar en Redux
         dispatch({type:'AGREGAR_REMISION', data:[
-          ...dataTable,
+          ...remisionesRedux,
           {
           id: String(Math.random()),
           producto:nombreSimilar,
@@ -142,7 +142,7 @@ function similaresScreen({navigation, route}){
         ]})
 
         setlistProductos([
-          ...dataTable,
+          ...remisionesRedux,
           {
           id: String(Math.random()),
           producto:nombreSimilar,
