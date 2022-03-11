@@ -157,6 +157,7 @@ function Remisiones({navigation, route}){
     const handleClear = () =>{
       setHeader({name:'',direccion:'',condicion:'CONTADO'})
       setTotal('0')
+      dispatch({type:'AGREGAR_REMISION', data:''})
       obtenerFolio()
     }
 

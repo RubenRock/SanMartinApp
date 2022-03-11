@@ -9,7 +9,7 @@ const db = SQLITE.openDatabase("db.db");
 let id_surdito
 
 function similaresScreen({navigation, route}){
-    const {dataTable, cantidad, empaque, claveSimilar} = route.params  
+    const {dataTable, cantidad, empaque, claveSimilar} = route.params      
     
     const [terminado, setTerminado] = useState(false) //bandera para indicar que termine el surtido y navegar a datosScreen
     const [dataInventario, setDataInventario] = useState([])
@@ -21,6 +21,7 @@ function similaresScreen({navigation, route}){
     const [empaqueFiltrado,setempaqueFiltrado]= useState([]) 
     const [listProductos, setlistProductos] = useState([])  //guarda los datos para la tabla que muestro en remisiones
     const [cant,setCant] = useState('1') 
+    const [precio, setPrecio] = useState(empaque.precio * cantidad)
 
     const remisionesRedux = useSelector(state => state.remisiones)
 
@@ -31,6 +32,11 @@ function similaresScreen({navigation, route}){
       terminado ? navigation.navigate('Datos',{dataTable:listProductos})
       : null
     },[terminado])
+
+    //actualizo el precio si es docena o media docena
+    useEffect(() =>{
+      calcularPrecioDocena(empaque)
+    },[dataEmpaque])
 
     //verifica que el surtido coincida con el total de piezas
     useEffect(() =>{
@@ -73,11 +79,34 @@ function similaresScreen({navigation, route}){
           (e) => console.log(e.message))
       },[])    
 
+    const calcularPrecioDocena = (item)=>{
+      let  cantidadMedioMayoreo =null
+      let obtenerUnidades = 1 
 
-      const handleListaProductos = (item)=>{          
-        setproductoSeleccionado(item.productos) //almaceno el producto seleccionado
-        setempaqueFiltrado(dataEmpaque.filter(data => data.clave ==item.claves )) //filtra la lista de empaques             
+      if (cantidad % 12 === 0){//identifico si es 12 o 6
+         cantidadMedioMayoreo='DOCE'
+         obtenerUnidades= cantidad/12         
+      }else{
+        cantidad / 6 === 1 ? cantidadMedioMayoreo ='SEIS' :null
+      }       
+        
+
+      //mayoreo==='DOCE'?  
+      let empaqueMayoreo =dataEmpaque.filter(item => item.clave===empaque.clave && item.empaque === cantidadMedioMayoreo)                              
+      
+      if (empaqueMayoreo[0]){        
+        empaqueMayoreo[0].piezas ===item.piezas ? setPrecio(parseInt(empaqueMayoreo[0].precio)*obtenerUnidades)
+        :null             
       }
+
+      console.log({empaqueMayoreo})        
+    }
+
+
+    const handleListaProductos = (item)=>{          
+      setproductoSeleccionado(item.productos) //almaceno el producto seleccionado
+      setempaqueFiltrado(dataEmpaque.filter(data => data.clave ==item.claves )) //filtra la lista de empaques             
+    }
 
       const handleListaEmpaque = (item) =>{            
         if (parseInt(cant)) {  
@@ -168,8 +197,8 @@ function similaresScreen({navigation, route}){
                     <Text style={[Interface.boton, {marginTop:5,width:'100%'}]}>aceptar</Text>
                   </TouchableOpacity>
                 : null
-                }                
-                <Text style={styles.text}>{cantidad} {empaque.empaque} {nombreSimilar} ${empaque.precio * cantidad}</Text>
+                }
+                <Text style={styles.text}>{cantidad} {empaque.empaque} {nombreSimilar} ${precio}</Text>
                 <View style={{flexDirection:"row",justifyContent:"space-around"}}>
                     <View>
                       <Text style={[styles.text,{fontSize:20, textAlign:"center"}]}>{cantidad * empaque.piezas}</Text>
